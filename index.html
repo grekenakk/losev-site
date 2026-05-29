@@ -82,9 +82,9 @@ img { display: block; max-width: 100%; }
   text-align: center; z-index: 2; }
 
 /* terminal */
-.terminal { width: 100%; max-width: 480px; margin: 0 auto 40px; background: var(--card);
-  border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-  font-family: var(--mono); }
+.terminal { width: 100%; background: var(--card);
+  border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5); font-family: var(--mono); }
 .terminal__bar { display: flex; align-items: center; padding: 10px 14px;
   border-bottom: 1px solid var(--line); background: var(--card-2); }
 .lights { display: flex; gap: 6px; }
@@ -174,8 +174,10 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
 .block-head__title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -0.02em; }
 
 /* about */
+.about__grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: center; }
+@media (max-width: 880px) { .about__grid { grid-template-columns: 1fr; gap: 32px; } }
 .about__text { font-size: clamp(22px, 2.4vw, 32px); font-weight: 500;
-  line-height: 1.35; letter-spacing: -0.01em; max-width: 880px; }
+  line-height: 1.35; letter-spacing: -0.01em; }
 .about__text .dim { color: var(--dim); }
 
 /* work */
@@ -261,15 +263,6 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
         <figure class="sticker sticker--sm sticker--square" style="--rot:5deg; --x:88%; --y:18%;"><img src="2.jpg" alt="" loading="lazy" /></figure>
         <figure class="sticker sticker--md sticker--landscape" style="--rot:-4deg; --x:14%; --y:76%;"><img src="3.jpg" alt="" loading="lazy" /></figure>
         <figure class="sticker sticker--md sticker--portrait" style="--rot:8deg; --x:84%; --y:78%;"><img src="4.jpg" alt="" loading="lazy" /></figure>
-      </div>
-
-      <div class="terminal">
-        <header class="terminal__bar">
-          <div class="lights"><span class="light light--red"></span><span class="light light--yellow"></span><span class="light light--green"></span></div>
-          <span class="terminal__title">~/losev — main.cpp</span>
-          <span class="terminal__spacer"></span>
-        </header>
-        <pre class="terminal__code" data-code></pre>
       </div>
 
       <h1 class="title" aria-label="Yan Losev">
@@ -413,11 +406,21 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
 
     <section class="about" id="about">
       <div class="block-head reveal"><span class="block-head__num">/01</span><span class="block-head__title">обо мне</span></div>
-      <p class="about__text reveal reveal--blur">
-        Строю AI-агентов, автоматизирую процессы и собираю сайты для&nbsp;бизнеса.
-        Работаю быстро и&nbsp;довожу до&nbsp;результата.
-        <span class="dim">На&nbsp;связи 24/7</span>
-      </p>
+      <div class="about__grid">
+        <p class="about__text reveal reveal--blur">
+          Строю AI-агентов, автоматизирую процессы и собираю сайты для&nbsp;бизнеса.
+          Работаю быстро и&nbsp;довожу до&nbsp;результата.
+          <span class="dim">На&nbsp;связи 24/7</span>
+        </p>
+        <div class="terminal reveal delay-1">
+          <header class="terminal__bar">
+            <div class="lights"><span class="light light--red"></span><span class="light light--yellow"></span><span class="light light--green"></span></div>
+            <span class="terminal__title">~/losev — main.cpp</span>
+            <span class="terminal__spacer"></span>
+          </header>
+          <pre class="terminal__code" data-code></pre>
+        </div>
+      </div>
     </section>
 
     <section class="work" id="work">
