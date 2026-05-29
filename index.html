@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ян Лосев — AI developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+
+:root {
+  --bg: #0f0f0e;
+  --fg: #f0ece4;
+  --dim: #8a847a;
+  --dimmer: #5e5852;
+  --line: rgba(255,255,255,0.08);
+  --line-strong: rgba(255,255,255,0.15);
+  --card: #1a1815;
+  --card-2: #16140f;
+  --accent: #c5562a;
+  --accent-2: #e08a4a;
+  --green: #4ade80;
+  --sans: 'Onest', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--fg); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body { min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ============ scroll progress + bg glow ============ */
+.scroll-progress { position: fixed; left: 0; top: 0; width: 100%; height: 2px;
+  background: transparent; z-index: 60; pointer-events: none; }
+.scroll-progress::before { content: ''; display: block; height: 100%; width: var(--p, 0%);
+  background: linear-gradient(90deg, #c5562a, #e08a4a); transition: width .08s linear; }
+
+.bg-glow { position: fixed; z-index: 0; pointer-events: none; border-radius: 50%; filter: blur(100px); }
+.bg-glow--1 { width: 620px; height: 620px; left: -12%; top: 4%;
+  background: radial-gradient(circle, rgba(197,86,42,0.28), transparent 70%); }
+.bg-glow--2 { width: 520px; height: 520px; right: -10%; top: 46%;
+  background: radial-gradient(circle, rgba(224,138,74,0.22), transparent 70%); }
+.bg-glow--3 { width: 720px; height: 720px; left: 28%; bottom: -22%;
+  background: radial-gradient(circle, rgba(197,86,42,0.18), transparent 70%); }
+
+/* ============ reveal on scroll ============ */
+.reveal { opacity: 0; transform: translateY(26px);
+  transition: opacity .9s ease, transform 1s cubic-bezier(.2,.7,.2,1), filter 1s ease; }
+.reveal.in { opacity: 1; transform: translateY(0); filter: blur(0); }
+.reveal--blur { filter: blur(8px); }
+.reveal--scale { transform: scale(.95) translateY(20px); }
+.reveal--scale.in { transform: scale(1) translateY(0); }
+.reveal.delay-1 { transition-delay: .08s; }
+.reveal.delay-2 { transition-delay: .16s; }
+.reveal.delay-3 { transition-delay: .24s; }
+.reveal.delay-4 { transition-delay: .32s; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; filter: none; } }
+
+/* ============ nav ============ */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  background: rgba(15,15,14,0.55); border-bottom: 1px solid var(--line); }
+.nav__inner { max-width: 1280px; margin: 0 auto; padding: 16px 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.nav__brand { font-family: var(--mono); font-weight: 500; font-size: 14px;
+  letter-spacing: 0.02em; color: var(--fg); }
+.nav__links { display: flex; gap: 26px; }
+.nav__links a { font-family: var(--mono); font-size: 13px; color: var(--dim);
+  transition: color .2s ease; }
+.nav__links a:hover { color: var(--fg); }
+.nav__status { display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.nav__status .dot { width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@media (max-width: 720px) { .nav__links { display: none; } }
+
+/* ============ hero ============ */
+.hero { position: relative; min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 120px 28px 80px;
+  text-align: center; z-index: 2; }
+
+/* terminal */
+.terminal { width: 100%; max-width: 480px; margin: 0 auto 40px; background: var(--card);
+  border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  font-family: var(--mono); }
+.terminal__bar { display: flex; align-items: center; padding: 10px 14px;
+  border-bottom: 1px solid var(--line); background: var(--card-2); }
+.lights { display: flex; gap: 6px; }
+.light { width: 11px; height: 11px; border-radius: 50%; }
+.light--red { background: #ff5f57; }
+.light--yellow { background: #febc2e; }
+.light--green { background: #28c840; }
+.terminal__title { flex: 1; text-align: center; font-size: 12px; color: var(--dim); }
+.terminal__spacer { width: 51px; }
+.terminal__code { padding: 18px 22px; font-size: 13px; line-height: 1.65;
+  text-align: left; color: var(--fg); white-space: pre-wrap; min-height: 130px; }
+.tok-key { color: #c084fc; }
+.tok-var { color: var(--accent-2); }
+.tok-prop { color: #60a5fa; }
+.tok-str { color: #86efac; }
+.tok-bool { color: #fb923c; }
+.tok-punct { color: var(--dim); }
+.tok-cmt { color: var(--dimmer); font-style: italic; }
+.terminal__caret { display: inline-block; width: 8px; height: 1.1em;
+  background: var(--accent-2); vertical-align: text-bottom; animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* title */
+.title { font-weight: 900; font-size: clamp(64px, 13vw, 188px); letter-spacing: -0.04em;
+  line-height: 1; margin: 0 auto; user-select: none; max-width: 100%; }
+.title__mask { display: inline-block; }
+.title__inner { display: inline-block; white-space: nowrap; }
+.title .ch { display: inline-block; will-change: transform; transform-origin: 50% 100%; }
+.title .ch.waving { animation: chWave .7s cubic-bezier(.3,1.4,.5,1); }
+@keyframes chWave {
+  0%   { transform: translateY(0); }
+  45%  { transform: translateY(-18px); }
+  100% { transform: translateY(0); }
+}
+
+.ch--wheel { position: relative; display: inline-block; }
+.f1-wheel { position: relative; display: inline-block; width: 0.92em; height: 0.92em;
+  vertical-align: -0.04em; filter: drop-shadow(0 10px 22px rgba(0,0,0,0.6)); }
+.f1-spin { transform-box: fill-box; transform-origin: center; }
+
+/* hero subtitle + cta */
+.hero__sub { margin-top: 36px; display: flex; align-items: center; gap: 14px;
+  font-family: var(--mono); font-size: clamp(13px, 1.3vw, 16px); color: var(--dim);
+  flex-wrap: wrap; justify-content: center; }
+.hero__sub .sep { color: var(--dimmer); }
+.hero__sub span:nth-child(3) { color: var(--fg); }
+
+.hero__cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 28px;
+  padding: 14px 26px; background: var(--fg); color: var(--bg); border-radius: 100px;
+  font-family: var(--sans); font-weight: 600; font-size: 15px;
+  transition: transform .2s ease, background .2s ease, color .2s ease; }
+.hero__cta:hover { background: var(--accent); color: var(--fg); transform: translateY(-2px); }
+.hero__cta .arr { transition: transform .2s ease; }
+.hero__cta:hover .arr { transform: translate(3px, -3px); }
+
+/* stickers (photo polaroids) */
+.stickers { position: absolute; inset: 0; pointer-events: none; z-index: -1; }
+.sticker { position: absolute; left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%) rotate(var(--rot, 0));
+  background: #fff; padding: 8px 8px 24px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.4);
+  border-radius: 3px; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.sticker img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sticker--lg { width: 200px; }
+.sticker--md { width: 168px; }
+.sticker--sm { width: 130px; }
+.sticker--portrait { aspect-ratio: 3/4; }
+.sticker--landscape { aspect-ratio: 4/3; }
+.sticker--square { aspect-ratio: 1/1; }
+@media (max-width: 900px) {
+  .sticker--lg { width: 140px; }
+  .sticker--md { width: 120px; }
+  .sticker--sm { width: 90px; }
+}
+@media (max-width: 640px) {
+  .stickers { opacity: 0.4; }
+  .sticker--lg { width: 110px; }
+  .sticker--md { width: 92px; }
+  .sticker--sm { width: 70px; }
+}
+
+/* ============ section blocks ============ */
+main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
+  position: relative; z-index: 2; }
+.block-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: 42px; }
+.block-head__num { font-family: var(--mono); font-size: 14px; color: var(--accent); }
+.block-head__title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -0.02em; }
+
+/* about */
+.about__text { font-size: clamp(22px, 2.4vw, 32px); font-weight: 500;
+  line-height: 1.35; letter-spacing: -0.01em; max-width: 880px; }
+.about__text .dim { color: var(--dim); }
+
+/* work */
+.work__list { list-style: none; border-top: 1px solid var(--line); }
+.work__list li a { display: grid;
+  grid-template-columns: 60px 1fr auto 80px 30px; gap: 24px; align-items: center;
+  padding: 24px 8px; border-bottom: 1px solid var(--line); transition: background .2s ease, padding .2s ease; }
+.work__list li a:hover { background: rgba(255,255,255,0.03); padding-left: 16px; }
+.work__list .num { font-family: var(--mono); font-size: 13px; color: var(--dim); }
+.work__list .name { font-size: clamp(20px, 2.2vw, 28px); font-weight: 700; letter-spacing: -0.02em; }
+.work__list .type { font-family: var(--mono); font-size: 13px; color: var(--dim); }
+.work__list .year { font-family: var(--mono); font-size: 13px; color: var(--dim); text-align: right; }
+.work__list .arrow { font-size: 20px; color: var(--dim); transition: transform .2s ease, color .2s ease; }
+.work__list li a:hover .arrow { transform: translate(3px, -3px); color: var(--accent); }
+@media (max-width: 720px) {
+  .work__list li a { grid-template-columns: 40px 1fr 24px; gap: 14px; }
+  .work__list .type, .work__list .year { display: none; }
+}
+
+/* services */
+.services__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+@media (max-width: 760px) { .services__grid { grid-template-columns: 1fr; } }
+.service { padding: 28px 26px; background: var(--card); border: 1px solid var(--line);
+  border-radius: 16px; transition: transform .3s ease, border-color .3s ease; }
+.service:hover { border-color: rgba(197,86,42,0.4); transform: translateY(-3px); }
+.service__head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px;
+  flex-wrap: wrap; }
+.service__num { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+.service__name { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; flex: 1; }
+.service__price { font-family: var(--mono); font-size: 13px; color: var(--fg);
+  background: rgba(197,86,42,0.15); padding: 4px 10px; border-radius: 100px; }
+.service__lead { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 16px; }
+.service__list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.service__list li { font-size: 14px; padding-left: 18px; position: relative; color: var(--fg); }
+.service__list li::before { content: '—'; position: absolute; left: 0; color: var(--accent); }
+.service__time { display: inline-block; font-family: var(--mono); font-size: 12px;
+  color: var(--dim); padding: 4px 10px; border: 1px solid var(--line); border-radius: 100px; }
+
+/* contact */
+.mail { display: inline-flex; align-items: baseline; gap: 14px; font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800; letter-spacing: -0.03em; transition: color .2s ease; }
+.mail:hover { color: var(--accent); }
+.mail .copy-hint { font-family: var(--mono); font-size: 13px; color: var(--dim); font-weight: 400;
+  letter-spacing: 0.01em; }
+.socials { list-style: none; display: flex; gap: 26px; margin-top: 28px; flex-wrap: wrap; }
+.socials a { font-family: var(--mono); font-size: 14px; color: var(--dim); transition: color .2s ease; }
+.socials a:hover { color: var(--fg); }
+
+/* footer */
+.foot { max-width: 1100px; margin: 0 auto; padding: 40px 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  font-family: var(--mono); font-size: 12px; color: var(--dim);
+  border-top: 1px solid var(--line); flex-wrap: wrap; }
+.foot__time { color: var(--fg); }
+.foot a { transition: color .2s ease; }
+.foot a:hover { color: var(--accent); }
+
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow--1" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow--2" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow--3" aria-hidden="true"></div>
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a href="#" class="nav__brand">losev</a>
+      <nav class="nav__links">
+        <a href="#about">about</a>
+        <a href="#work">work</a>
+        <a href="#services">services</a>
+        <a href="#contact">contact</a>
+      </nav>
+      <span class="nav__status"><span class="dot"></span> available</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="stickers" aria-hidden="true">
+        <figure class="sticker sticker--lg sticker--portrait" style="--rot:-7deg; --x:8%; --y:24%;"><img src="1.jpg" alt="" loading="lazy" /></figure>
+        <figure class="sticker sticker--sm sticker--square" style="--rot:5deg; --x:88%; --y:18%;"><img src="2.jpg" alt="" loading="lazy" /></figure>
+        <figure class="sticker sticker--md sticker--landscape" style="--rot:-4deg; --x:14%; --y:76%;"><img src="3.jpg" alt="" loading="lazy" /></figure>
+        <figure class="sticker sticker--md sticker--portrait" style="--rot:8deg; --x:84%; --y:78%;"><img src="4.jpg" alt="" loading="lazy" /></figure>
+      </div>
+
+      <div class="terminal">
+        <header class="terminal__bar">
+          <div class="lights"><span class="light light--red"></span><span class="light light--yellow"></span><span class="light light--green"></span></div>
+          <span class="terminal__title">~/losev — main.cpp</span>
+          <span class="terminal__spacer"></span>
+        </header>
+        <pre class="terminal__code" data-code></pre>
+      </div>
+
+      <h1 class="title" aria-label="Yan Losev">
+        <span class="title__mask"><span class="title__inner">
+          <span class="ch">Y</span><span class="ch">a</span><span class="ch">n</span><span class="ch">&nbsp;</span><span class="ch">L</span><span class="ch ch--wheel" aria-label="o"><svg class="f1-wheel" viewBox="0 0 100 100" aria-hidden="true">
+  <defs>
+    <path id="tireTextPath" d="M 50 5 a 45 45 0 1 1 0 90 a 45 45 0 1 1 0 -90" fill="none"/>
+    <radialGradient id="rotorGrad" cx="45%" cy="42%" r="62%">
+      <stop offset="0%" stop-color="#6e685d"/>
+      <stop offset="60%" stop-color="#544e44"/>
+      <stop offset="100%" stop-color="#3e3830"/>
+    </radialGradient>
+  </defs>
+  <g class="f1-spin">
+    <circle cx="50" cy="50" r="48" fill="#0a0807"/>
+    <circle cx="50" cy="50" r="48" fill="none" stroke="#000" stroke-width="0.6"/>
+    <text font-family="JetBrains Mono, monospace" font-size="4" font-weight="500" letter-spacing="1" fill="#f0ece4">
+      <textPath href="#tireTextPath" startOffset="0">AI · IS · THE · FUTURE · AI · IS · THE · FUTURE · AI · IS · THE · FUTURE · AI · IS · THE · FUTURE · </textPath>
+    </text>
+    <circle cx="50" cy="50" r="42" fill="#141210"/>
+    <circle cx="50" cy="50" r="41" fill="url(#rotorGrad)"/>
+    <circle cx="50" cy="50" r="41" fill="none" stroke="#8a8378" stroke-width="0.4" opacity="0.5"/>
+    <circle cx="50" cy="50" r="18" fill="#141210"/>
+    <g transform="translate(50,50)">
+      <circle cx="32.0" cy="0.0" r="1.1" fill="#1c1813"/>
+          <circle cx="30.7" cy="9.02" r="1.1" fill="#1c1813"/>
+          <circle cx="26.92" cy="17.3" r="1.1" fill="#1c1813"/>
+          <circle cx="20.96" cy="24.18" r="1.1" fill="#1c1813"/>
+          <circle cx="13.29" cy="29.11" r="1.1" fill="#1c1813"/>
+          <circle cx="4.55" cy="31.67" r="1.1" fill="#1c1813"/>
+          <circle cx="-4.55" cy="31.67" r="1.1" fill="#1c1813"/>
+          <circle cx="-13.29" cy="29.11" r="1.1" fill="#1c1813"/>
+          <circle cx="-20.96" cy="24.18" r="1.1" fill="#1c1813"/>
+          <circle cx="-26.92" cy="17.3" r="1.1" fill="#1c1813"/>
+          <circle cx="-30.7" cy="9.02" r="1.1" fill="#1c1813"/>
+          <circle cx="-32.0" cy="0.0" r="1.1" fill="#1c1813"/>
+          <circle cx="-30.7" cy="-9.02" r="1.1" fill="#1c1813"/>
+          <circle cx="-26.92" cy="-17.3" r="1.1" fill="#1c1813"/>
+          <circle cx="-20.96" cy="-24.18" r="1.1" fill="#1c1813"/>
+          <circle cx="-13.29" cy="-29.11" r="1.1" fill="#1c1813"/>
+          <circle cx="-4.55" cy="-31.67" r="1.1" fill="#1c1813"/>
+          <circle cx="4.55" cy="-31.67" r="1.1" fill="#1c1813"/>
+          <circle cx="13.29" cy="-29.11" r="1.1" fill="#1c1813"/>
+          <circle cx="20.96" cy="-24.18" r="1.1" fill="#1c1813"/>
+          <circle cx="26.92" cy="-17.3" r="1.1" fill="#1c1813"/>
+          <circle cx="30.7" cy="-9.02" r="1.1" fill="#1c1813"/>
+    </g>
+    <g transform="translate(50,50)">
+      <line x1="10.0" y1="0.0" x2="38.0" y2="0.0" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="9.51" y1="3.09" x2="36.14" y2="11.74" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="8.09" y1="5.88" x2="30.74" y2="22.34" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="5.88" y1="8.09" x2="22.34" y2="30.74" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="3.09" y1="9.51" x2="11.74" y2="36.14" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="0.0" y1="10.0" x2="0.0" y2="38.0" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-3.09" y1="9.51" x2="-11.74" y2="36.14" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-5.88" y1="8.09" x2="-22.34" y2="30.74" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-8.09" y1="5.88" x2="-30.74" y2="22.34" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-9.51" y1="3.09" x2="-36.14" y2="11.74" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-10.0" y1="0.0" x2="-38.0" y2="0.0" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-9.51" y1="-3.09" x2="-36.14" y2="-11.74" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-8.09" y1="-5.88" x2="-30.74" y2="-22.34" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-5.88" y1="-8.09" x2="-22.34" y2="-30.74" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-3.09" y1="-9.51" x2="-11.74" y2="-36.14" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="-0.0" y1="-10.0" x2="-0.0" y2="-38.0" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="3.09" y1="-9.51" x2="11.74" y2="-36.14" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="5.88" y1="-8.09" x2="22.34" y2="-30.74" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="8.09" y1="-5.88" x2="30.74" y2="-22.34" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="9.51" y1="-3.09" x2="36.14" y2="-11.74" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="10.0" y1="0.0" x2="38.0" y2="0.0" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="9.51" y1="3.09" x2="36.14" y2="11.74" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="8.09" y1="5.88" x2="30.74" y2="22.34" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="5.88" y1="8.09" x2="22.34" y2="30.74" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="3.09" y1="9.51" x2="11.74" y2="36.14" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="0.0" y1="10.0" x2="0.0" y2="38.0" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-3.09" y1="9.51" x2="-11.74" y2="36.14" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-5.88" y1="8.09" x2="-22.34" y2="30.74" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-8.09" y1="5.88" x2="-30.74" y2="22.34" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-9.51" y1="3.09" x2="-36.14" y2="11.74" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-10.0" y1="0.0" x2="-38.0" y2="0.0" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-9.51" y1="-3.09" x2="-36.14" y2="-11.74" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-8.09" y1="-5.88" x2="-30.74" y2="-22.34" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-5.88" y1="-8.09" x2="-22.34" y2="-30.74" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-3.09" y1="-9.51" x2="-11.74" y2="-36.14" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="-0.0" y1="-10.0" x2="-0.0" y2="-38.0" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="3.09" y1="-9.51" x2="11.74" y2="-36.14" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="5.88" y1="-8.09" x2="22.34" y2="-30.74" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="8.09" y1="-5.88" x2="30.74" y2="-22.34" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="9.51" y1="-3.09" x2="36.14" y2="-11.74" stroke="#4a3f2f" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="14.0" y1="0.0" x2="36.0" y2="0.0" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="13.31" y1="4.33" x2="34.24" y2="11.12" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="11.33" y1="8.23" x2="29.12" y2="21.16" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="8.23" y1="11.33" x2="21.16" y2="29.12" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="4.33" y1="13.31" x2="11.12" y2="34.24" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="0.0" y1="14.0" x2="0.0" y2="36.0" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-4.33" y1="13.31" x2="-11.12" y2="34.24" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-8.23" y1="11.33" x2="-21.16" y2="29.12" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-11.33" y1="8.23" x2="-29.12" y2="21.16" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-13.31" y1="4.33" x2="-34.24" y2="11.12" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-14.0" y1="0.0" x2="-36.0" y2="0.0" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-13.31" y1="-4.33" x2="-34.24" y2="-11.12" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-11.33" y1="-8.23" x2="-29.12" y2="-21.16" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-8.23" y1="-11.33" x2="-21.16" y2="-29.12" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-4.33" y1="-13.31" x2="-11.12" y2="-34.24" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="-0.0" y1="-14.0" x2="-0.0" y2="-36.0" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="4.33" y1="-13.31" x2="11.12" y2="-34.24" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="8.23" y1="-11.33" x2="21.16" y2="-29.12" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="11.33" y1="-8.23" x2="29.12" y2="-21.16" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+          <line x1="13.31" y1="-4.33" x2="34.24" y2="-11.12" stroke="#c5562a" stroke-width="0.5" opacity="0.6"/>
+    </g>
+    <g transform="translate(50,50)">
+      <circle r="14" fill="#c5562a"/>
+      <circle r="14" fill="none" stroke="#e08a4a" stroke-width="0.7"/>
+      <circle r="4.5" fill="#0a0a0a"/>
+      <circle r="1.8" fill="#3a342e"/>
+      <circle cx="0" cy="-9.5" r="1.1" fill="#f0ece4"/>
+      <circle cx="9" cy="-3" r="1.1" fill="#f0ece4"/>
+      <circle cx="5.6" cy="7.7" r="1.1" fill="#f0ece4"/>
+      <circle cx="-5.6" cy="7.7" r="1.1" fill="#f0ece4"/>
+      <circle cx="-9" cy="-3" r="1.1" fill="#f0ece4"/>
+    </g>
+  </g>
+  <g transform="translate(50,50) rotate(315)">
+    <path d="M -11 -33 A 34.8 34.8 0 0 1 11 -33 L 15 -45.5 A 47.5 47.5 0 0 0 -15 -45.5 Z" fill="#c8302a"/>
+    <path d="M -11 -33 A 34.8 34.8 0 0 1 11 -33 L 15 -45.5 A 47.5 47.5 0 0 0 -15 -45.5 Z" fill="none" stroke="#e85550" stroke-width="0.5"/>
+    <rect x="-10.5" y="-43.5" width="1.2" height="5" rx="0.5" fill="#ff8a85"/>
+    <rect x="-6" y="-44.2" width="1.2" height="5.5" rx="0.5" fill="#ff8a85"/>
+    <rect x="-1.5" y="-44.5" width="1.2" height="5.7" rx="0.5" fill="#ff8a85"/>
+    <rect x="3" y="-44.2" width="1.2" height="5.5" rx="0.5" fill="#ff8a85"/>
+    <rect x="7.5" y="-43.5" width="1.2" height="5" rx="0.5" fill="#ff8a85"/>
+  </g>
+</svg></span><span class="ch">s</span><span class="ch">e</span><span class="ch">v</span>
+        </span></span>
+      </h1>
+
+      <p class="hero__sub">
+        <span>ai developer</span><span class="sep">/</span><span>решения, которые экономят время и приносят деньги</span>
+      </p>
+
+      <a href="https://t.me/grekenakk" target="_blank" rel="noopener" class="hero__cta">написать в telegram <span class="arr">↗</span></a>
+    </section>
+
+    <section class="about" id="about">
+      <div class="block-head reveal"><span class="block-head__num">/01</span><span class="block-head__title">обо мне</span></div>
+      <p class="about__text reveal reveal--blur">
+        Строю AI-агентов, автоматизирую процессы и собираю сайты для&nbsp;бизнеса.
+        Работаю быстро и&nbsp;довожу до&nbsp;результата.
+        <span class="dim">На&nbsp;связи 24/7</span>
+      </p>
+    </section>
+
+    <section class="work" id="work">
+      <div class="block-head reveal"><span class="block-head__num">/02</span><span class="block-head__title">работы</span></div>
+      <ul class="work__list reveal delay-1">
+        <li><a href="#contact"><span class="num">001</span><span class="name">скоро здесь</span><span class="type">первые кейсы уже в работе</span><span class="year">2026</span><span class="arrow">↗</span></a></li>
+      </ul>
+    </section>
+
+    <section class="services" id="services">
+      <div class="block-head reveal"><span class="block-head__num">/03</span><span class="block-head__title">услуги</span></div>
+      <div class="services__grid">
+
+        <article class="service reveal reveal--scale">
+          <header class="service__head"><span class="service__num">i.</span><h3 class="service__name">боты</h3><span class="service__price">от 15k</span></header>
+          <p class="service__lead">бот для продаж, приёма заявок и&nbsp;автоматизации. работает 24/7.</p>
+          <ul class="service__list">
+            <li>telegram, whatsapp или сайт</li>
+            <li>ai-ассистент</li>
+            <li>встроенная оплата</li>
+            <li>собирает заявки в&nbsp;таблицу или crm</li>
+          </ul>
+          <span class="service__time">5–7 дней</span>
+        </article>
+
+        <article class="service reveal reveal--scale delay-1">
+          <header class="service__head"><span class="service__num">ii.</span><h3 class="service__name">автоматизации</h3><span class="service__price">от 10k</span></header>
+          <p class="service__lead">убираю ручную рутину — заявки, уведомления, crm и&nbsp;таблицы работают сами.</p>
+          <ul class="service__list">
+            <li>заявки сами попадают в&nbsp;crm или таблицу</li>
+            <li>уведомления о&nbsp;новых клиентах</li>
+            <li>интеграции между сервисами</li>
+            <li>экономит часы команды</li>
+          </ul>
+          <span class="service__time">3–7 дней</span>
+        </article>
+
+        <article class="service reveal reveal--scale delay-2">
+          <header class="service__head"><span class="service__num">iii.</span><h3 class="service__name">лендинг</h3><span class="service__price">от 15k</span></header>
+          <p class="service__lead">одностраничный сайт под продукт, услугу или личный бренд.</p>
+          <ul class="service__list">
+            <li>уникальный дизайн под вас</li>
+            <li>живые анимации и&nbsp;интерактив</li>
+            <li>мобильная версия с&nbsp;нуля</li>
+            <li>ai-чат как живой консультант</li>
+            <li>интеграция с&nbsp;crm/telegram</li>
+          </ul>
+          <span class="service__time">3–7 дней</span>
+        </article>
+
+        <article class="service reveal reveal--scale delay-3">
+          <header class="service__head"><span class="service__num">iv.</span><h3 class="service__name">полноценный сайт</h3><span class="service__price">от 40k</span></header>
+          <p class="service__lead">многостраничник, портфолио или небольшой сервис под&nbsp;ключ.</p>
+          <ul class="service__list">
+            <li>уникальный дизайн под вас</li>
+            <li>каталог, заявки, оплаты</li>
+            <li>админка чтобы менять контент сами</li>
+            <li>ai-чат как живой консультант</li>
+            <li>seo-готовность и&nbsp;поддержка</li>
+          </ul>
+          <span class="service__time">2–3 недели</span>
+        </article>
+
+        <article class="service reveal reveal--scale delay-4">
+          <header class="service__head"><span class="service__num">v.</span><h3 class="service__name">ai агенты</h3><span class="service__price">от 50k</span></header>
+          <p class="service__lead">умные агенты которые не просто отвечают, а&nbsp;выполняют задачи за&nbsp;вас — работают с&nbsp;данными, системами и&nbsp;принимают решения.</p>
+          <ul class="service__list">
+            <li>многошаговые сценарии и&nbsp;решения</li>
+            <li>интеграция с&nbsp;вашими сервисами</li>
+            <li>работает с&nbsp;данными, документами, почтой</li>
+            <li>заменяет рутину сотрудников</li>
+          </ul>
+          <span class="service__time">1–4 недели</span>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="block-head reveal"><span class="block-head__num">/04</span><span class="block-head__title">связаться</span></div>
+      <a href="https://t.me/grekenakk" target="_blank" rel="noopener" class="mail reveal delay-1">@grekenakk<span class="copy-hint">написать в telegram ↗</span></a>
+      <ul class="socials reveal delay-2">
+        <li><a href="https://instagram.com/losev.yan" target="_blank" rel="noopener">instagram ↗</a></li>
+        <li><a href="https://github.com/grekenakk" target="_blank" rel="noopener">github ↗</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>© 2026 ян лосев</span>
+    <span class="foot__time" data-time>—</span>
+    <a href="#" class="back">наверх ↑</a>
+  </footer>
+
+  <script>
+
+(() => {
+
+  /* terminal C++ typing */
+  (() => {
+    const target = document.querySelector('[data-code]');
+    if (!target) return;
+    const tokens = [
+      { t: "struct ", c: "tok-key" },
+      { t: "Losev", c: "tok-var" },
+      { t: " " },
+      { t: "{", c: "tok-punct", pause: 320 },
+      { t: "\n  " },
+      { t: "string", c: "tok-key" },
+      { t: " focus", c: "tok-prop" },
+      { t: " = ", c: "tok-punct" },
+      { t: '"ai & automation"', c: "tok-str" },
+      { t: ";", c: "tok-punct", pause: 240 },
+      { t: "\n  " },
+      { t: "bool", c: "tok-key" },
+      { t: " shipping", c: "tok-prop" },
+      { t: " = ", c: "tok-punct" },
+      { t: "true", c: "tok-bool" },
+      { t: ";", c: "tok-punct", pause: 280 },
+      { t: "\n  " },
+      { t: "// available", c: "tok-cmt", pause: 200 },
+      { t: "\n" },
+      { t: "}", c: "tok-punct" },
+      { t: ";", c: "tok-punct" },
+    ];
+    const caret = '<span class="terminal__caret"></span>';
+    let html = '';
+    let ti = 0, ci = 0;
+    const tick = () => {
+      if (ti >= tokens.length) { target.innerHTML = html + caret; return; }
+      const tok = tokens[ti];
+      const cls = tok.c ? ` class="${tok.c}"` : '';
+      if (ci === 0) html += `<span${cls}>`;
+      const ch = tok.t[ci];
+      html += ch === '\n' ? '</span>\n<span'+cls+'>' : ch;
+      ci++;
+      target.innerHTML = html + '</span>' + caret;
+      if (ci >= tok.t.length) {
+        html += '</span>';
+        ti++; ci = 0;
+        setTimeout(tick, tok.pause || 16 + Math.random() * 22);
+      } else {
+        setTimeout(tick, 16 + Math.random() * 24);
+      }
+    };
+    target.innerHTML = caret;
+    setTimeout(tick, 600);
+  })();
+
+  /* F1 wheel spin + letter wave on title hover */
+  (() => {
+    const spins = document.querySelectorAll('.f1-spin');
+    const title = document.querySelector('.title');
+    const chs = title ? title.querySelectorAll('.ch') : [];
+    let angle = 0, speed = 0.25, target = 0.25;
+    const loop = () => {
+      speed += (target - speed) * 0.04;
+      angle = (angle + speed) % 360;
+      spins.forEach(s => { s.style.transform = `rotate(${angle}deg)`; });
+      requestAnimationFrame(loop);
+    };
+    if (title) {
+      title.addEventListener('mouseenter', () => {
+        target = 2.6;
+        chs.forEach((ch, i) => {
+          ch.classList.remove('waving');
+          // force reflow so animation can restart
+          void ch.offsetWidth;
+          setTimeout(() => ch.classList.add('waving'), i * 55);
+        });
+      });
+      title.addEventListener('mouseleave', () => { target = 0.25; });
+      chs.forEach((ch) => {
+        ch.addEventListener('animationend', () => ch.classList.remove('waving'));
+      });
+    }
+    if (spins.length) loop();
+  })();
+
+  /* Moscow time in footer */
+  (() => {
+    const el = document.querySelector('[data-time]');
+    if (!el) return;
+    const upd = () => {
+      const now = new Date();
+      const fmt = new Intl.DateTimeFormat('ru', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow' });
+      el.textContent = fmt.format(now) + ' MSK';
+    };
+    upd();
+    setInterval(upd, 30 * 1000);
+  })();
+
+  /* sticker parallax */
+  (() => {
+    const stickers = document.querySelectorAll('.sticker');
+    if (!stickers.length) return;
+    let mx = 0, my = 0;
+    addEventListener('mousemove', (e) => {
+      mx = (e.clientX / innerWidth - 0.5) * 2;
+      my = (e.clientY / innerHeight - 0.5) * 2;
+    }, { passive: true });
+    const loop = () => {
+      stickers.forEach((s, i) => {
+        const depth = 8 + (i % 3) * 4;
+        const rot = getComputedStyle(s).getPropertyValue('--rot') || '0deg';
+        s.style.transform = `translate(calc(-50% + ${mx * depth}px), calc(-50% + ${my * depth}px)) rotate(${rot})`;
+      });
+      requestAnimationFrame(loop);
+    };
+    loop();
+  })();
+
+  /* scroll progress */
+  (() => {
+    const bar = document.querySelector('.scroll-progress');
+    if (!bar) return;
+    const doc = document.documentElement;
+    const upd = () => {
+      const total = doc.scrollHeight - doc.clientHeight;
+      const p = total > 0 ? (doc.scrollTop / total) * 100 : 0;
+      bar.style.setProperty('--p', p + '%');
+    };
+    upd();
+    addEventListener('scroll', upd, { passive: true });
+    addEventListener('resize', upd);
+  })();
+
+  /* reveal on scroll */
+  (() => {
+    const els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    els.forEach((el) => io.observe(el));
+  })();
+
+})();
+
+  </script>
+</body>
+</html>
