@@ -276,7 +276,7 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
       <stop offset="100%" stop-color="#3e3830"/>
     </radialGradient>
   </defs>
-  <g class="f1-spin">
+  <g class="f1-spin f1-spin-back">
     <circle cx="50" cy="50" r="48" fill="#0a0807"/>
     <circle cx="50" cy="50" r="48" fill="none" stroke="#000" stroke-width="0.6"/>
     <text font-family="JetBrains Mono, monospace" font-size="4" font-weight="500" letter-spacing="1" fill="#f0ece4">
@@ -310,6 +310,23 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
           <circle cx="26.92" cy="-17.3" r="1.1" fill="#1c1813"/>
           <circle cx="30.7" cy="-9.02" r="1.1" fill="#1c1813"/>
     </g>
+  </g>
+
+  <g transform="translate(50,50) rotate(315)">
+    <path id="caliperArc" d="M -22.94 -32.77 A 40 40 0 0 1 22.94 -32.77" fill="none"/>
+    <path d="M -22.94 -32.77 A 40 40 0 0 1 22.94 -32.77 Z" fill="#c8302a"/>
+    <path d="M -22.94 -32.77 A 40 40 0 0 1 22.94 -32.77 Z" fill="none" stroke="#e85550" stroke-width="0.5"/>
+    <line x1="-22.94" y1="-32.77" x2="22.94" y2="-32.77" stroke="#9c211c" stroke-width="0.5" opacity="0.7"/>
+    <circle cx="-12" cy="-34.5" r="0.9" fill="#7a1612"/>
+    <circle cx="-4" cy="-35.5" r="0.9" fill="#7a1612"/>
+    <circle cx="4" cy="-35.5" r="0.9" fill="#7a1612"/>
+    <circle cx="12" cy="-34.5" r="0.9" fill="#7a1612"/>
+    <text font-family="JetBrains Mono, monospace" font-size="3.2" font-weight="700" fill="#f0ece4" letter-spacing="1.2">
+      <textPath href="#caliperArc" startOffset="50%" text-anchor="middle">LOSEV</textPath>
+    </text>
+  </g>
+
+  <g class="f1-spin f1-spin-front">
     <g transform="translate(50,50)">
       <line x1="10.0" y1="0.0" x2="38.0" y2="0.0" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
           <line x1="9.51" y1="3.09" x2="36.14" y2="11.74" stroke="#0a0807" stroke-width="2.6" stroke-linecap="round"/>
@@ -383,15 +400,6 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
       <circle cx="-5.6" cy="7.7" r="1.1" fill="#f0ece4"/>
       <circle cx="-9" cy="-3" r="1.1" fill="#f0ece4"/>
     </g>
-  </g>
-  <g transform="translate(50,50) rotate(315)">
-    <path d="M -11 -33 A 34.8 34.8 0 0 1 11 -33 L 15 -45.5 A 47.5 47.5 0 0 0 -15 -45.5 Z" fill="#c8302a"/>
-    <path d="M -11 -33 A 34.8 34.8 0 0 1 11 -33 L 15 -45.5 A 47.5 47.5 0 0 0 -15 -45.5 Z" fill="none" stroke="#e85550" stroke-width="0.5"/>
-    <rect x="-10.5" y="-43.5" width="1.2" height="5" rx="0.5" fill="#ff8a85"/>
-    <rect x="-6" y="-44.2" width="1.2" height="5.5" rx="0.5" fill="#ff8a85"/>
-    <rect x="-1.5" y="-44.5" width="1.2" height="5.7" rx="0.5" fill="#ff8a85"/>
-    <rect x="3" y="-44.2" width="1.2" height="5.5" rx="0.5" fill="#ff8a85"/>
-    <rect x="7.5" y="-43.5" width="1.2" height="5" rx="0.5" fill="#ff8a85"/>
   </g>
 </svg></span><span class="ch">s</span><span class="ch">e</span><span class="ch">v</span>
         </span></span>
