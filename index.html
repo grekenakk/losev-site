@@ -196,11 +196,32 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
 .work__list .type { font-family: var(--mono); font-size: 13px; color: var(--dim); }
 .work__list .year { font-family: var(--mono); font-size: 13px; color: var(--dim); text-align: right; }
 .work__list .arrow { font-size: 20px; color: var(--dim); transition: transform .2s ease, color .2s ease; }
-.work__list li a:hover .arrow { transform: translate(3px, -3px); color: var(--accent-warm); }
+.work__list li a:hover .arrow { transform: translate(3px, -3px); color: var(--accent); }
 @media (max-width: 720px) {
   .work__list li a { grid-template-columns: 40px 1fr 24px; gap: 14px; }
   .work__list .type, .work__list .year { display: none; }
 }
+
+/* section eyebrow (founder/agency label under section titles) */
+.section-eyebrow { font-family: var(--mono); font-size: 13px; color: var(--accent);
+  margin-top: -28px; margin-bottom: 34px; }
+.section-eyebrow--warm { color: var(--accent-warm); }
+
+/* startup cards (swipeable) */
+.startups__track { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-bottom: 14px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.startups__track::-webkit-scrollbar { display: none; }
+.startup-card { scroll-snap-align: start; flex: 0 0 320px; background: var(--card);
+  border: 1px solid var(--line); border-radius: 16px; padding: 28px 26px;
+  display: flex; flex-direction: column; gap: 14px;
+  transition: transform .3s ease, border-color .3s ease; }
+.startup-card:hover { border-color: var(--accent-warm); transform: translateY(-4px); }
+.startup-card__top { display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.startup-card__name { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+.startup-card__desc { font-size: 14px; color: var(--dim); line-height: 1.5; flex: 1; }
+.startup-card__link { font-family: var(--mono); font-size: 13px; color: var(--accent-warm); }
+@media (max-width: 640px) { .startup-card { flex-basis: 260px; } }
 
 /* services */
 .services__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
@@ -253,7 +274,8 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
       <a href="#" class="nav__brand">losev</a>
       <nav class="nav__links">
         <a href="#about">about</a>
-        <a href="#work">work</a>
+        <a href="#startups">startups</a>
+        <a href="#cases">cases</a>
         <a href="#services">services</a>
         <a href="#contact">contact</a>
       </nav>
@@ -301,17 +323,38 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
       </div>
     </section>
 
-    <section class="work" id="work">
-      <div class="block-head reveal"><span class="block-head__num block-head__num--warm">/02</span><span class="block-head__title">проекты</span></div>
+    <section class="startups" id="startups">
+      <div class="block-head reveal">
+        <span class="block-head__num block-head__num--warm">/02</span><span class="block-head__title">стартапы</span>
+      </div>
+      <p class="section-eyebrow section-eyebrow--warm reveal">фаундер — продукты, которые я строю сам</p>
+      <div class="startups__track reveal delay-1">
+        <a class="startup-card" href="#contact">
+          <div class="startup-card__top"><span>001</span><span>2026</span></div>
+          <h3 class="startup-card__name">synoptic</h3>
+          <p class="startup-card__desc">кино-сервис — AI-разбор фильмов, рейтинги, списки, сравнение картин</p>
+          <span class="startup-card__link">подробнее ↗</span>
+        </a>
+        <a class="startup-card" href="#contact">
+          <div class="startup-card__top"><span>002</span><span>2026</span></div>
+          <h3 class="startup-card__name">закрытый проект</h3>
+          <p class="startup-card__desc">детали — по договорённости, расскажу при знакомстве</p>
+          <span class="startup-card__link">написать ↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="cases" id="cases">
+      <div class="block-head reveal"><span class="block-head__num">/03</span><span class="block-head__title">кейсы</span></div>
+      <p class="section-eyebrow reveal">агентство — работы <span style="color: var(--fg);">losev studio</span> для клиентов</p>
       <ul class="work__list reveal delay-1">
-        <li><a href="#contact"><span class="num">001</span><span class="name">synoptic</span><span class="type">кино-сервис · AI-разбор фильмов</span><span class="year">2026</span><span class="arrow">↗</span></a></li>
-        <li><a href="#contact"><span class="num">002</span><span class="name">закрытый проект</span><span class="type">по договорённости</span><span class="year">2026</span><span class="arrow">↗</span></a></li>
+        <li><a href="#contact"><span class="num">001</span><span class="name">скоро здесь</span><span class="type">первые кейсы уже в работе</span><span class="year">2026</span><span class="arrow">↗</span></a></li>
       </ul>
     </section>
 
     <section class="services" id="services">
-      <div class="block-head reveal"><span class="block-head__num">/03</span><span class="block-head__title">услуги</span></div>
-      <p class="reveal" style="font-family: var(--mono); font-size: 13px; color: var(--dim); margin-top: -28px; margin-bottom: 30px;">агентство <span style="color: var(--fg);">losev studio</span></p>
+      <div class="block-head reveal"><span class="block-head__num">/04</span><span class="block-head__title">услуги</span></div>
+      <p class="section-eyebrow reveal">агентство <span style="color: var(--fg);">losev studio</span></p>
       <div class="services__grid">
 
         <article class="service reveal reveal--scale">
@@ -380,7 +423,7 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
     </section>
 
     <section class="contact" id="contact">
-      <div class="block-head reveal"><span class="block-head__num">/04</span><span class="block-head__title">связаться</span></div>
+      <div class="block-head reveal"><span class="block-head__num">/05</span><span class="block-head__title">связаться</span></div>
       <a href="https://t.me/grekenakk" target="_blank" rel="noopener" class="mail reveal delay-1">@grekenakk<span class="copy-hint">написать в telegram ↗</span></a>
       <ul class="socials reveal delay-2">
         <li><a href="https://instagram.com/losev.yan" target="_blank" rel="noopener">instagram ↗</a></li>
