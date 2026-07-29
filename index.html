@@ -179,6 +179,10 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
 .about__text { font-size: clamp(22px, 2.4vw, 32px); font-weight: 500;
   line-height: 1.35; letter-spacing: -0.01em; }
 .about__text .dim { color: var(--dim); }
+.about__role { margin-bottom: 24px; }
+.about__role:last-child { margin-bottom: 0; }
+.about__role-label { display: block; font-family: var(--mono); font-size: 13px;
+  font-weight: 500; color: var(--accent); letter-spacing: 0.01em; margin-bottom: 8px; }
 
 /* work */
 .work__list { list-style: none; border-top: 1px solid var(--line); }
@@ -356,11 +360,10 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
     <section class="about" id="about">
       <div class="block-head reveal"><span class="block-head__num">/01</span><span class="block-head__title">обо мне</span></div>
       <div class="about__grid">
-        <p class="about__text reveal reveal--blur">
-          Строю AI-агентов, автоматизирую процессы и собираю сайты для&nbsp;бизнеса.
-          Работаю быстро и&nbsp;довожу до&nbsp;результата.
-          <span class="dim">На&nbsp;связи 24/7</span>
-        </p>
+        <div class="about__text reveal reveal--blur">
+          <p class="about__role"><span class="about__role-label">как фаундер</span>строю свои продукты — <b>synoptic</b> и&nbsp;ещё один в&nbsp;закрытой разработке</p>
+          <p class="about__role"><span class="about__role-label">как агентство</span><b>losev studio</b> помогает бизнесу ботами, автоматизациями и&nbsp;сайтами. <span class="dim">На&nbsp;связи 24/7</span></p>
+        </div>
         <div class="terminal reveal delay-1">
           <header class="terminal__bar">
             <div class="lights"><span class="light light--red"></span><span class="light light--yellow"></span><span class="light light--green"></span></div>
@@ -373,7 +376,7 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
     </section>
 
     <section class="work" id="work">
-      <div class="block-head reveal"><span class="block-head__num">/02</span><span class="block-head__title">работы</span></div>
+      <div class="block-head reveal"><span class="block-head__num">/02</span><span class="block-head__title">проекты</span></div>
       <ul class="work__list reveal delay-1">
         <li><a href="#contact"><span class="num">001</span><span class="name">synoptic</span><span class="type">кино-сервис · AI-разбор фильмов</span><span class="year">2026</span><span class="arrow">↗</span></a></li>
         <li><a href="#contact"><span class="num">002</span><span class="name">закрытый проект</span><span class="type">по договорённости</span><span class="year">2026</span><span class="arrow">↗</span></a></li>
