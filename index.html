@@ -75,10 +75,52 @@ img { display: block; max-width: 100%; }
 .nav__links a:hover { color: var(--fg); }
 .nav__status { display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--mono); font-size: 12px; color: var(--dim); }
-.nav__status .dot { width: 7px; height: 7px; border-radius: 50%;
-  background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s ease-in-out infinite; }
+.nav__status .dot, .menu-overlay__status .dot { width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s ease-in-out infinite;
+  display: inline-block; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 @media (max-width: 720px) { .nav__links { display: none; } }
+
+/* ============ burger + full-screen menu ============ */
+.burger { display: none; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%; background: transparent;
+  border: 1px solid var(--line-strong); cursor: pointer; position: relative;
+  transition: background .25s ease, border-color .25s ease; flex-shrink: 0; }
+.burger:hover { border-color: var(--accent); }
+.burger:hover::after { content: ''; position: absolute; inset: -6px; border-radius: 50%;
+  background: var(--accent); filter: blur(10px); opacity: .35; z-index: -1; }
+.burger__lines { width: 16px; height: 10px; position: relative; }
+.burger__lines span { position: absolute; left: 0; right: 0; height: 1px; background: var(--fg);
+  transition: transform .3s cubic-bezier(.77,0,.175,1), opacity .3s cubic-bezier(.77,0,.175,1); }
+.burger__lines span:first-child { top: 0; }
+.burger__lines span:last-child { bottom: 0; }
+.burger.is-open .burger__lines span:first-child { transform: translateY(4.5px) rotate(45deg); }
+.burger.is-open .burger__lines span:last-child { transform: translateY(-4.5px) rotate(-45deg); }
+@media (max-width: 720px) { .burger { display: flex; } }
+
+.menu-overlay { position: fixed; inset: 0; z-index: 200; height: 0; overflow: hidden;
+  background: rgba(10,9,8,0); pointer-events: none;
+  transition: background .7s cubic-bezier(.86,0,.07,1); }
+.menu-overlay.is-visible { height: 100%; background: rgba(10,9,8,0.97);
+  backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); pointer-events: auto; }
+.menu-overlay__inner { height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 34px; }
+.menu-overlay__links { list-style: none; display: flex; flex-direction: column;
+  align-items: center; gap: 26px; }
+.menu-overlay__links a { font-size: clamp(28px, 6vw, 44px); font-weight: 800;
+  letter-spacing: -0.02em; color: var(--fg);
+  filter: blur(14px); opacity: 0;
+  transition: opacity .7s cubic-bezier(.77,0,.175,1), filter .7s cubic-bezier(.77,0,.175,1), color .2s ease; }
+.menu-overlay__links a:hover { color: var(--accent); }
+.menu-overlay.is-visible .menu-overlay__links a { filter: blur(0); opacity: 1; }
+.menu-overlay.is-visible .menu-overlay__links a:nth-child(1) { transition-delay: .05s; }
+.menu-overlay.is-visible .menu-overlay__links a:nth-child(2) { transition-delay: .1s; }
+.menu-overlay.is-visible .menu-overlay__links a:nth-child(3) { transition-delay: .15s; }
+.menu-overlay.is-visible .menu-overlay__links a:nth-child(4) { transition-delay: .2s; }
+.menu-overlay.is-visible .menu-overlay__links a:nth-child(5) { transition-delay: .25s; }
+.menu-overlay__status { font-family: var(--mono); font-size: 13px; color: var(--dim);
+  filter: blur(14px); opacity: 0; transition: opacity .7s cubic-bezier(.77,0,.175,1) .3s, filter .7s cubic-bezier(.77,0,.175,1) .3s; }
+.menu-overlay.is-visible .menu-overlay__status { filter: blur(0); opacity: 1; }
 
 /* ============ hero ============ */
 .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column;
@@ -281,8 +323,24 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
         <a href="#contact">contact</a>
       </nav>
       <span class="nav__status"><span class="dot"></span> available</span>
+      <button class="burger" id="burger" aria-label="menu" aria-expanded="false">
+        <span class="burger__lines"><span></span><span></span></span>
+      </button>
     </div>
   </header>
+
+  <div class="menu-overlay" id="menuOverlay">
+    <div class="menu-overlay__inner">
+      <ul class="menu-overlay__links">
+        <li><a href="#about" data-menu-link>about</a></li>
+        <li><a href="#startups" data-menu-link>startups</a></li>
+        <li><a href="#cases" data-menu-link>cases</a></li>
+        <li><a href="#services" data-menu-link>services</a></li>
+        <li><a href="#contact" data-menu-link>contact</a></li>
+      </ul>
+      <span class="menu-overlay__status"><span class="dot"></span> available</span>
+    </div>
+  </div>
 
   <main>
     <section class="hero">
@@ -561,6 +619,31 @@ main > section { max-width: 1100px; margin: 0 auto; padding: 100px 28px;
     upd();
     addEventListener('scroll', upd, { passive: true });
     addEventListener('resize', upd);
+  })();
+
+  /* burger + full-screen menu */
+  (() => {
+    const burger = document.getElementById('burger');
+    const overlay = document.getElementById('menuOverlay');
+    if (!burger || !overlay) return;
+    const close = () => {
+      burger.classList.remove('is-open');
+      burger.setAttribute('aria-expanded', 'false');
+      overlay.classList.remove('is-visible');
+      document.body.style.overflow = '';
+    };
+    const open = () => {
+      burger.classList.add('is-open');
+      burger.setAttribute('aria-expanded', 'true');
+      overlay.classList.add('is-visible');
+      document.body.style.overflow = 'hidden';
+    };
+    burger.addEventListener('click', () => {
+      overlay.classList.contains('is-visible') ? close() : open();
+    });
+    overlay.querySelectorAll('[data-menu-link]').forEach((a) => {
+      a.addEventListener('click', close);
+    });
   })();
 
   /* reveal on scroll */
